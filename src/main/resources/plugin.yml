@@ -1,0 +1,5 @@
+name: Authenticator
+main: com.huskydreaming.authenticator.Authenticator
+version: 0.1-ALPHA
+api-version: 1.18
+author: HuskyDreaming
