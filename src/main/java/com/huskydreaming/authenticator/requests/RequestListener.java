@@ -20,10 +20,16 @@ public class RequestListener implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        Location location = player.getLocation();
-        location.setPitch(40.0f);
-        player.teleport(location);
-        authenticationRequestHandler.sendRequest(event.getPlayer());
+
+        if(player.hasPermission("authenticator.use") || player.isOp()) {
+
+            // Correction to see the map properly with QR code
+            Location location = player.getLocation();
+            location.setPitch(40.0f);
+            player.teleport(location);
+
+            authenticationRequestHandler.sendRequest(event.getPlayer());
+        }
     }
 
     @EventHandler
