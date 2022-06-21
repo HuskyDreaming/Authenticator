@@ -2,10 +2,15 @@ package com.huskydreaming.authenticator.requests;
 
 import com.huskydreaming.authenticator.authentication.Authentication;
 import com.huskydreaming.authenticator.authentication.AuthenticationHandler;
-import org.bukkit.ChatColor;
+import com.huskydreaming.authenticator.utilities.Chat;
+import com.huskydreaming.authenticator.utilities.Locale;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
 
 import java.util.Map;
 import java.util.UUID;
@@ -13,10 +18,12 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class RequestHandler {
 
+    private final Plugin plugin;
     private final AuthenticationHandler authenticationHandler;
     private final Map<UUID, Request> requests = new ConcurrentHashMap<>();
 
-    public RequestHandler(AuthenticationHandler authenticationHandler) {
+    public RequestHandler(Plugin plugin, AuthenticationHandler authenticationHandler) {
+        this.plugin = plugin;
         this.authenticationHandler = authenticationHandler;
     }
 
@@ -35,11 +42,11 @@ public class RequestHandler {
             NamespacedKey namespacedKey = authenticationHandler.getNamespacedKey();
             ItemStack map = authenticationRequest.getAuthentication().createMap(namespacedKey, player);
             player.getInventory().addItem(map);
-            player.sendMessage(ChatColor.GREEN + "Scan the QR code in the authenticator application of your choice. Once complete...");
+            player.sendMessage(Chat.parameterize(Locale.SCAN_QR));
         }
 
-        player.sendMessage(ChatColor.GREEN + "Please type in the authentication code:");
-
+        correction(player);
+        player.sendMessage(Chat.parameterize(Locale.AUTHENTICATION_CODE));
         requests.put(player.getUniqueId(), authenticationRequest);
     }
 
@@ -53,25 +60,40 @@ public class RequestHandler {
                         authenticationHandler.verify(player, authentication);
                         authenticationHandler.cleanup(player);
 
-                        player.sendMessage("You have successfully been verified.");
+                        player.sendMessage(Chat.parameterize(Locale.VERIFIED));
                         requests.remove(player.getUniqueId());
                     } else {
-                        player.sendMessage("You must use the correct code from the authenticator app to verify.");
+                        player.sendMessage(Chat.parameterize(Locale.AUTHENTICATION_CODE_INCORRECT));
                     }
                     break;
                 }
                 case AUTHENTICATE: {
                     Authentication authentication = authenticationHandler.getAuthentications().get(player.getUniqueId());
                     if (authenticationHandler.isVerified(authentication, code)) {
-                        player.sendMessage("You have successfully been authenticated.");
+                        player.sendMessage(Chat.parameterize(Locale.AUTHENTICATED));
                         requests.remove(player.getUniqueId());
                     } else {
-                        player.kickPlayer("You must use the correct code to authenticate.");
+                        Bukkit.getScheduler().runTask(plugin, ()-> player.kickPlayer(Chat.parameterize(Locale.VERIFICATION_INCORRECT)));
                     }
                     break;
                 }
             }
 
         }
+    }
+
+    public void removeRequest(Player player) {
+        requests.remove(player.getUniqueId());
+    }
+
+    private void correction(Player player) {
+        // Correction to see the map properly with QR code
+        Location location = player.getLocation();
+        Block block = player.getWorld().getHighestBlockAt(location.getBlockX(), location.getBlockZ());
+
+        location = block.getLocation();
+        location.setPitch(40.0f);
+        location.add(0.5, 1, 0.5);
+        player.teleport(location);
     }
 }

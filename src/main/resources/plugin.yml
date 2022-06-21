@@ -1,5 +1,10 @@
 name: Authenticator
 main: com.huskydreaming.authenticator.Authenticator
-version: 0.1-ALPHA
+version: 0.1.2-ALPHA
 api-version: 1.18
 author: HuskyDreaming
+
+commands:
+  authenticator:
+    aliases: [auth, authentication]
+    description: Authentication command.

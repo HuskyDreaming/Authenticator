@@ -6,11 +6,13 @@
 
   <groupId>com.huskydreaming</groupId>
   <artifactId>Authenticator</artifactId>
-  <version>0.1-ALPHA</version>
+  <version>0.1.2-ALPHA</version>
 
   <properties>
     <maven.compiler.source>8</maven.compiler.source>
     <maven.compiler.target>8</maven.compiler.target>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
   </properties>
 
   <build>

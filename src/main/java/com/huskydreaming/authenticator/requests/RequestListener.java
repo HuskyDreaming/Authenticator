@@ -1,6 +1,5 @@
 package com.huskydreaming.authenticator.requests;
 
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -11,10 +10,10 @@ import org.bukkit.event.player.PlayerMoveEvent;
 
 public class RequestListener implements Listener {
 
-    private final RequestHandler authenticationRequestHandler;
+    private final RequestHandler requestHandler;
 
-    public RequestListener(RequestHandler authenticationRequestHandler) {
-        this.authenticationRequestHandler = authenticationRequestHandler;
+    public RequestListener(RequestHandler requestHandler) {
+        this.requestHandler = requestHandler;
     }
 
     @EventHandler
@@ -22,34 +21,28 @@ public class RequestListener implements Listener {
         Player player = event.getPlayer();
 
         if(player.hasPermission("authenticator.use") || player.isOp()) {
-
-            // Correction to see the map properly with QR code
-            Location location = player.getLocation();
-            location.setPitch(40.0f);
-            player.teleport(location);
-
-            authenticationRequestHandler.sendRequest(event.getPlayer());
+            requestHandler.sendRequest(player);
         }
     }
 
     @EventHandler
     public void onMove(PlayerMoveEvent event) {
-        if(authenticationRequestHandler.hasRequest(event.getPlayer())) {
+        if(requestHandler.hasRequest(event.getPlayer())) {
             event.setCancelled(true);
         }
     }
 
     @EventHandler
     public void onCommand(PlayerCommandPreprocessEvent event) {
-        if(authenticationRequestHandler.hasRequest(event.getPlayer())) {
+        if(requestHandler.hasRequest(event.getPlayer())) {
             event.setCancelled(true);
         }
     }
 
     @EventHandler
     public void onChat(AsyncPlayerChatEvent event) {
-        if (authenticationRequestHandler.hasRequest(event.getPlayer())) {
-            authenticationRequestHandler.processRequest(event.getPlayer(), event.getMessage());
+        if (requestHandler.hasRequest(event.getPlayer())) {
+            requestHandler.processRequest(event.getPlayer(), event.getMessage());
             event.setCancelled(true);
         }
     }

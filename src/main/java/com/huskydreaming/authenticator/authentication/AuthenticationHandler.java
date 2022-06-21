@@ -6,6 +6,7 @@ import com.huskydreaming.authenticator.code.CodeVerifier;
 import com.huskydreaming.authenticator.utilities.Json;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -52,6 +53,15 @@ public class AuthenticationHandler {
         CodeVerifier verifier = new CodeVerifier(codeGenerator, Instant.now().getEpochSecond());
 
         return verifier.isValid(authentication.getSecret(), code);
+    }
+
+    public boolean isVerified(OfflinePlayer offlinePlayer) {
+        return authentications.containsKey(offlinePlayer.getUniqueId());
+    }
+
+
+    public void remove(OfflinePlayer offlinePlayer) {
+        authentications.remove(offlinePlayer.getUniqueId());
     }
 
     public boolean isItem(ItemStack itemStack) {

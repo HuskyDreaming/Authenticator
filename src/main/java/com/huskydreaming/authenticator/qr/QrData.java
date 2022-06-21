@@ -31,7 +31,7 @@ public class QrData {
         try {
             return URLEncoder.encode(string, StandardCharsets.UTF_8.toString()).replaceAll("\\+", "%20");
         } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException("Could not URI encode QrData.");
+            throw new RuntimeException("Could not encode QrData (URI).");
         }
     }
 }
