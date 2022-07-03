@@ -12,21 +12,31 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 
 public class Authenticator extends JavaPlugin {
 
+    private Yaml locale;
     private AuthenticationHandler authenticationHandler;
+    private RequestHandler requestHandler;
 
     @Override
     public void onEnable() {
-        registerLocale(new Yaml("locale"));
+        locale = new Yaml("locale");
+        locale.load(this);
+        Locale.setConfiguration(locale.getConfiguration());
+
+        for (Locale message : Locale.values()) {
+            locale.getConfiguration().set(message.toString(), message.parse());
+        }
+        locale.save();
 
         authenticationHandler = new AuthenticationHandler(this);
         authenticationHandler.deserialize();
 
-        RequestHandler requestHandler = new RequestHandler(this, authenticationHandler);
+        requestHandler = new RequestHandler(this, authenticationHandler);
 
         for(Player player : getServer().getOnlinePlayers()) {
             if(player.hasPermission("authenticator.use") || player.isOp()) {
@@ -40,7 +50,7 @@ public class Authenticator extends JavaPlugin {
         );
 
         PluginCommand pluginCommand = getCommand("authenticator");
-        if(pluginCommand != null) pluginCommand.setExecutor(new AuthenticationCommand(authenticationHandler, requestHandler));
+        if(pluginCommand != null) pluginCommand.setExecutor(new AuthenticationCommand(this));
     }
 
     @Override
@@ -54,14 +64,30 @@ public class Authenticator extends JavaPlugin {
         Arrays.stream(listeners).forEach(listener -> pluginManager.registerEvents(listener, this));
     }
 
-    private void registerLocale(Yaml yaml) {
-        yaml.reload(this);
-        Locale.setConfiguration(yaml.getConfiguration());
+    public void reload() {
+        locale.reload(this);
+        authenticationHandler.serialize();
+        authenticationHandler.deserialize();
 
-        for (Locale message : Locale.values()) {
-            yaml.getConfiguration().set(message.toString(), message.parse());
+        for(Player player : getServer().getOnlinePlayers()) {
+            if(player.hasPermission("authenticator.use") || player.isOp()) {
+                requestHandler.sendRequest(player);
+            }
         }
-        yaml.save();
     }
 
+    @NotNull
+    public AuthenticationHandler getAuthenticationHandler() {
+        return authenticationHandler;
+    }
+
+    @NotNull
+    public RequestHandler getRequestHandler() {
+        return requestHandler;
+    }
+
+    @NotNull
+    public Yaml getLocale() {
+        return locale;
+    }
 }

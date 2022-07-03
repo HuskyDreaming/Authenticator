@@ -1,5 +1,6 @@
 package com.huskydreaming.authenticator.authentication;
 
+import com.huskydreaming.authenticator.Authenticator;
 import com.huskydreaming.authenticator.requests.RequestHandler;
 import com.huskydreaming.authenticator.utilities.Chat;
 import com.huskydreaming.authenticator.utilities.Locale;
@@ -17,12 +18,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AuthenticationCommand implements CommandExecutor, TabCompleter {
-    private final AuthenticationHandler authenticationHandler;
-    private final RequestHandler requestHandler;
 
-    public AuthenticationCommand(AuthenticationHandler authenticationHandler, RequestHandler requestHandler) {
-        this.authenticationHandler = authenticationHandler;
-        this.requestHandler = requestHandler;
+    private final Authenticator authenticator;
+
+    public AuthenticationCommand(Authenticator authenticator) {
+        this.authenticator = authenticator;
     }
 
     @Override
@@ -33,6 +33,16 @@ public class AuthenticationCommand implements CommandExecutor, TabCompleter {
                     commandSender.sendMessage(Chat.parameterize(Locale.NO_PERMISSION));
                     return true;
                 }
+                commandSender.sendMessage(Chat.parameterize(Locale.FEATURE_NOT_IMPLEMENTED));
+                return true;
+            }
+            if(strings[0].equalsIgnoreCase("reload") || commandSender.isOp()) {
+                if(!commandSender.hasPermission("authenticator.reload")) {
+                    commandSender.sendMessage(Chat.parameterize(Locale.NO_PERMISSION));
+                    return true;
+                }
+
+                authenticator.reload();
                 commandSender.sendMessage(Chat.parameterize(Locale.FEATURE_NOT_IMPLEMENTED));
                 return true;
             }
@@ -55,11 +65,14 @@ public class AuthenticationCommand implements CommandExecutor, TabCompleter {
                     commandSender.sendMessage(Chat.parameterize(Locale.OFFLINE_PLAYER_INVALID, strings[1]));
                     return true;
                 }
+
+                AuthenticationHandler authenticationHandler = authenticator.getAuthenticationHandler();
                 if(authenticationHandler.isVerified(offlinePlayer)) {
                     commandSender.sendMessage(Chat.parameterize(Locale.OFFLINE_PLAYER_REMOVED, strings[1]));
                     authenticationHandler.remove(offlinePlayer);
 
                     Player player = offlinePlayer.getPlayer();
+                    RequestHandler requestHandler = authenticator.getRequestHandler();
                     if(player != null) requestHandler.removeRequest(player);
                 } else {
                     commandSender.sendMessage(Chat.parameterize(Locale.OFFLINE_PLAYER_UNVERIFIED, strings[1]));
@@ -87,6 +100,7 @@ public class AuthenticationCommand implements CommandExecutor, TabCompleter {
             if(sender.hasPermission("authenticator.backupcodes") || sender.isOp()) list.add("backupcodes");
             if(sender.hasPermission("authenticator.resetcodes") || sender.isOp()) list.add("resetcodes");
             if(sender.hasPermission("authenticator.remove") || sender.isOp()) list.add("remove");
+            if(sender.hasPermission("authenticator.reload") || sender.isOp()) list.add("reload");
         }
         if(strings.length == 2 && strings[0].equalsIgnoreCase("remove")) {
             if(sender.hasPermission("authenticator.remove") || sender.isOp()) {

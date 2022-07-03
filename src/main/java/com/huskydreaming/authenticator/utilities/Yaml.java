@@ -18,8 +18,13 @@ public class Yaml {
         this.name = name;
     }
 
-    private void newFile(Plugin plugin) {
-        if(file == null) file = new File(plugin.getDataFolder(), getFileName());
+    public void load(Plugin plugin) {
+        file = new File(plugin.getDataFolder(), getFileName());
+        if(!file.exists()) {
+            plugin.saveResource(plugin.getDataFolder() + File.separator + getFileName(), false);
+        }
+
+        configuration = YamlConfiguration.loadConfiguration(file);
     }
 
     public void save() {
@@ -32,16 +37,16 @@ public class Yaml {
     }
 
     public void reload(Plugin plugin) {
-        newFile(plugin);
 
         configuration = YamlConfiguration.loadConfiguration(file);
         InputStream inputStream = plugin.getResource(getFileName());
 
-        if(inputStream != null) {
-            Reader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
-            YamlConfiguration defaultConfiguration = YamlConfiguration.loadConfiguration(reader);
-            configuration.setDefaults(defaultConfiguration);
-        }
+        if(inputStream == null) return;
+
+        Reader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+        YamlConfiguration defaultConfiguration = YamlConfiguration.loadConfiguration(reader);
+        configuration.setDefaults(defaultConfiguration);
+
     }
 
     public FileConfiguration getConfiguration() {

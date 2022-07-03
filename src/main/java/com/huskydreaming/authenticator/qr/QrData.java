@@ -1,6 +1,5 @@
 package com.huskydreaming.authenticator.qr;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
@@ -28,10 +27,6 @@ public class QrData {
     }
 
     private String encode(String string) {
-        try {
-            return URLEncoder.encode(string, StandardCharsets.UTF_8.toString()).replaceAll("\\+", "%20");
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException("Could not encode QrData (URI).");
-        }
+        return URLEncoder.encode(string, StandardCharsets.UTF_8).replaceAll("\\+", "%20");
     }
 }
