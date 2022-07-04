@@ -14,6 +14,7 @@ public enum Locale {
     SCAN_QR("&aScan the QR code in the authenticator application of your choice. Once complete..."),
     VERIFICATION_INCORRECT("&cYou must use the correct code to verify."),
     VERIFIED("&aYou have successfully been verified.");
+
     private final String def;
     private static FileConfiguration configuration;
 

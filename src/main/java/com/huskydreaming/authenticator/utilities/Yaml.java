@@ -19,16 +19,25 @@ public class Yaml {
     }
 
     public void load(Plugin plugin) {
-        file = new File(plugin.getDataFolder(), getFileName());
-        if(!file.exists()) {
-            plugin.saveResource(plugin.getDataFolder() + File.separator + getFileName(), false);
+        file = new File(plugin.getDataFolder() + File.separator + getFileName());
+        try {
+            if(file.getParentFile().mkdirs()) {
+                plugin.getLogger().info("Creating new directory: " + plugin.getDataFolder());
+            }
+
+            if (file.createNewFile()) {
+                plugin.getLogger().info("Creating new file: " + getFileName());
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
 
         configuration = YamlConfiguration.loadConfiguration(file);
+        plugin.getLogger().info("Deserialized " + getFileName() + " successfully.");
     }
 
     public void save() {
-        if(configuration == null || file == null) return;
+        if(configuration == null || file == null || !file.exists()) return;
         try {
             configuration.save(file);
         } catch (IOException e) {
@@ -37,7 +46,6 @@ public class Yaml {
     }
 
     public void reload(Plugin plugin) {
-
         configuration = YamlConfiguration.loadConfiguration(file);
         InputStream inputStream = plugin.getResource(getFileName());
 
@@ -57,3 +65,4 @@ public class Yaml {
         return name + ".yml";
     }
 }
+
