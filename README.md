@@ -9,12 +9,14 @@ Use QR Codes in minecraft to correctly verify
 ## Features
 - QR Scanning in game. (Custom Map Rendering)
 - Command, Grief and Chat Protection.
+- Administration
 - Advanced Requests
 - Json Storage
 - SHA1 Algorithm
+- Locale (100% Customisable messages)
 
 ## TODO:
 - [x] QR Codes
 - [ ] Backup Codes.
-- [ ] Localisation
-- [ ] Administration Commands.
+- [x] Localisation
+- [x] Administration Commands.
