@@ -54,10 +54,11 @@ public class RequestHandler {
         Request authenticationRequest = requests.get(player.getUniqueId());
         if (authenticationRequest != null) {
             switch (authenticationRequest.getAuthenticationType()) {
-                case VERIFY: {
+                case VERIFY -> {
                     Authentication authentication = authenticationRequest.getAuthentication();
                     if (authenticationHandler.isVerified(authentication, code)) {
                         authenticationHandler.verify(player, authentication);
+                        Bukkit.getScheduler().runTask(plugin, () -> authenticationHandler.runCommands(player, plugin.getConfig()));
                         authenticationHandler.cleanup(player);
 
                         player.sendMessage(Chat.parameterize(Locale.VERIFIED));
@@ -65,17 +66,16 @@ public class RequestHandler {
                     } else {
                         player.sendMessage(Chat.parameterize(Locale.AUTHENTICATION_CODE_INCORRECT));
                     }
-                    break;
                 }
-                case AUTHENTICATE: {
+                case AUTHENTICATE -> {
                     Authentication authentication = authenticationHandler.getAuthentications().get(player.getUniqueId());
                     if (authenticationHandler.isVerified(authentication, code)) {
+                        Bukkit.getScheduler().runTask(plugin, () -> authenticationHandler.runCommands(player, plugin.getConfig()));
                         player.sendMessage(Chat.parameterize(Locale.AUTHENTICATED));
                         requests.remove(player.getUniqueId());
                     } else {
-                        Bukkit.getScheduler().runTask(plugin, ()-> player.kickPlayer(Chat.parameterize(Locale.VERIFICATION_INCORRECT)));
+                        Bukkit.getScheduler().runTask(plugin, () -> player.kickPlayer(Chat.parameterize(Locale.VERIFICATION_INCORRECT)));
                     }
-                    break;
                 }
             }
 

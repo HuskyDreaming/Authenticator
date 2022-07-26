@@ -24,6 +24,8 @@ public class Authenticator extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        saveDefaultConfig();
+
         locale = new Yaml("locale");
         locale.load(this);
         Locale.setConfiguration(locale.getConfiguration());
@@ -65,6 +67,7 @@ public class Authenticator extends JavaPlugin {
     }
 
     public void reload() {
+        reloadConfig();
         locale.reload(this);
         authenticationHandler.serialize();
         authenticationHandler.deserialize();
@@ -84,10 +87,5 @@ public class Authenticator extends JavaPlugin {
     @NotNull
     public RequestHandler getRequestHandler() {
         return requestHandler;
-    }
-
-    @NotNull
-    public Yaml getLocale() {
-        return locale;
     }
 }

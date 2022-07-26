@@ -4,9 +4,12 @@ import com.google.gson.reflect.TypeToken;
 import com.huskydreaming.authenticator.code.CodeGenerator;
 import com.huskydreaming.authenticator.code.CodeVerifier;
 import com.huskydreaming.authenticator.utilities.Json;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -17,6 +20,7 @@ import org.bukkit.plugin.Plugin;
 import java.lang.reflect.Type;
 import java.time.Instant;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -46,6 +50,15 @@ public class AuthenticationHandler {
 
     public void verify(Player player, Authentication authentication) {
         authentications.put(player.getUniqueId(), authentication);
+    }
+
+    public void runCommands(Player player, FileConfiguration configuration) {
+        List<String> commands = configuration.getStringList("commands");
+        ConsoleCommandSender commandSender = Bukkit.getConsoleSender();
+        for(String command : commands) {
+            command = command.replace("{player}", player.getName());
+            Bukkit.dispatchCommand(commandSender, command);
+        }
     }
 
     public boolean isVerified(Authentication authentication, String code) {

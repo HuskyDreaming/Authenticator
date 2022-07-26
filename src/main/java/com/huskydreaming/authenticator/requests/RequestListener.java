@@ -3,10 +3,8 @@ package com.huskydreaming.authenticator.requests;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.entity.EntityPickupItemEvent;
+import org.bukkit.event.player.*;
 
 public class RequestListener implements Listener {
 
@@ -22,6 +20,22 @@ public class RequestListener implements Listener {
 
         if(player.hasPermission("authenticator.use") || player.isOp()) {
             requestHandler.sendRequest(player);
+        }
+    }
+
+    @EventHandler
+    public void onItemPickup(EntityPickupItemEvent event) {
+        if(event.getEntity() instanceof Player player) {
+            if(requestHandler.hasRequest(player)) {
+                event.setCancelled(true);
+            }
+        }
+    }
+
+    @EventHandler
+    public void onItemDrop(PlayerDropItemEvent event) {
+        if (requestHandler.hasRequest(event.getPlayer())) {
+            event.setCancelled(true);
         }
     }
 

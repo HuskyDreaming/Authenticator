@@ -1,0 +1,4 @@
+# Commands that get run when a player gets authenticated.
+commands:
+  - "say hello {player}"
+#  - "lp user {player} permission add *"
