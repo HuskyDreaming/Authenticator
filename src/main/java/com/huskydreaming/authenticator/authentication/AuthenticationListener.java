@@ -2,7 +2,6 @@ package com.huskydreaming.authenticator.authentication;
 
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Item;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityPickupItemEvent;
@@ -23,7 +22,7 @@ public class AuthenticationListener implements Listener {
 
     @EventHandler
     public void onItemPickup(EntityPickupItemEvent event) {
-        if(isAuthenticatorItem(event.getItem())) {
+        if (isAuthenticatorItem(event.getItem())) {
             event.setCancelled(true);
         }
     }

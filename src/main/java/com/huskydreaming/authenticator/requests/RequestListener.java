@@ -18,15 +18,15 @@ public class RequestListener implements Listener {
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
 
-        if(player.hasPermission("authenticator.use") || player.isOp()) {
+        if (player.hasPermission("authenticator.use") || player.isOp()) {
             requestHandler.sendRequest(player);
         }
     }
 
     @EventHandler
     public void onItemPickup(EntityPickupItemEvent event) {
-        if(event.getEntity() instanceof Player player) {
-            if(requestHandler.hasRequest(player)) {
+        if (event.getEntity() instanceof Player player) {
+            if (requestHandler.hasRequest(player)) {
                 event.setCancelled(true);
             }
         }
@@ -41,14 +41,14 @@ public class RequestListener implements Listener {
 
     @EventHandler
     public void onMove(PlayerMoveEvent event) {
-        if(requestHandler.hasRequest(event.getPlayer())) {
+        if (requestHandler.hasRequest(event.getPlayer())) {
             event.setCancelled(true);
         }
     }
 
     @EventHandler
     public void onCommand(PlayerCommandPreprocessEvent event) {
-        if(requestHandler.hasRequest(event.getPlayer())) {
+        if (requestHandler.hasRequest(event.getPlayer())) {
             event.setCancelled(true);
         }
     }

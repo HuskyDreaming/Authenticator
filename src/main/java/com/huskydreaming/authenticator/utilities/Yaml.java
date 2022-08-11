@@ -1,11 +1,11 @@
 package com.huskydreaming.authenticator.utilities;
 
-import java.io.*;
-import java.nio.charset.StandardCharsets;
-
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
+
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 
 
 public class Yaml {
@@ -21,7 +21,7 @@ public class Yaml {
     public void load(Plugin plugin) {
         file = new File(plugin.getDataFolder() + File.separator + getFileName());
         try {
-            if(file.getParentFile().mkdirs()) {
+            if (file.getParentFile().mkdirs()) {
                 plugin.getLogger().info("Creating new directory: " + plugin.getDataFolder());
             }
 
@@ -37,7 +37,7 @@ public class Yaml {
     }
 
     public void save() {
-        if(configuration == null || file == null || !file.exists()) return;
+        if (configuration == null || file == null || !file.exists()) return;
         try {
             configuration.save(file);
         } catch (IOException e) {
@@ -49,7 +49,7 @@ public class Yaml {
         configuration = YamlConfiguration.loadConfiguration(file);
         InputStream inputStream = plugin.getResource(getFileName());
 
-        if(inputStream == null) return;
+        if (inputStream == null) return;
 
         Reader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
         YamlConfiguration defaultConfiguration = YamlConfiguration.loadConfiguration(reader);

@@ -1,12 +1,12 @@
 package com.huskydreaming.authenticator.code;
 
-public class CodeVerifier {
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 
-    private final CodeGenerator codeGenerator;
+public class CodeVerifier {
     private final long time;
 
-    public CodeVerifier(CodeGenerator codeGenerator, long time) {
-        this.codeGenerator = codeGenerator;
+    public CodeVerifier(long time) {
         this.time = time;
     }
 
@@ -21,7 +21,12 @@ public class CodeVerifier {
     }
 
     private boolean checkCode(String secret, long counter, String code) {
-        String actualCode = codeGenerator.generate(secret, counter);
+        String actualCode;
+        try {
+            actualCode = CodeGenerator.generate(secret, counter);
+        } catch (NoSuchAlgorithmException | InvalidKeyException e) {
+            throw new RuntimeException(e);
+        }
         return timeSafeStringComparison(actualCode, code);
     }
 

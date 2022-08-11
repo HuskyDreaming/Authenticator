@@ -1,7 +1,9 @@
 package com.huskydreaming.authenticator.requests;
 
+import com.huskydreaming.authenticator.Authenticator;
 import com.huskydreaming.authenticator.authentication.Authentication;
 import com.huskydreaming.authenticator.authentication.AuthenticationHandler;
+import com.huskydreaming.authenticator.code.CodeGenerator;
 import com.huskydreaming.authenticator.utilities.Chat;
 import com.huskydreaming.authenticator.utilities.Locale;
 import org.bukkit.Bukkit;
@@ -10,7 +12,6 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.Plugin;
 
 import java.util.Map;
 import java.util.UUID;
@@ -18,12 +19,12 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class RequestHandler {
 
-    private final Plugin plugin;
+    private final Authenticator authenticator;
     private final AuthenticationHandler authenticationHandler;
     private final Map<UUID, Request> requests = new ConcurrentHashMap<>();
 
-    public RequestHandler(Plugin plugin, AuthenticationHandler authenticationHandler) {
-        this.plugin = plugin;
+    public RequestHandler(Authenticator authenticator, AuthenticationHandler authenticationHandler) {
+        this.authenticator = authenticator;
         this.authenticationHandler = authenticationHandler;
     }
 
@@ -32,7 +33,7 @@ public class RequestHandler {
     }
 
     public void sendRequest(Player player) {
-        Authentication authentication = authenticationHandler.getAuthentications().get(player.getUniqueId());
+        Authentication authentication = authenticationHandler.getAuthentication(player);
         Request authenticationRequest;
         if (authentication != null) {
             authenticationRequest = new Request(RequestType.AUTHENTICATE, authentication);
@@ -57,24 +58,41 @@ public class RequestHandler {
                 case VERIFY -> {
                     Authentication authentication = authenticationRequest.getAuthentication();
                     if (authenticationHandler.isVerified(authentication, code)) {
+
+
+                        authentication.setBackupCodes(CodeGenerator.generateBackupCodes(
+                                authenticator.getBackupCodesLength(),
+                                authenticator.getBackupCodesAmount()
+                        ));
+
                         authenticationHandler.verify(player, authentication);
-                        Bukkit.getScheduler().runTask(plugin, () -> authenticationHandler.runCommands(player, plugin.getConfig()));
+
+                        Bukkit.getScheduler().runTask(authenticator, () ->
+                                authenticationHandler.runCommands(player, authenticator.getConfig())
+                        );
+
                         authenticationHandler.cleanup(player);
 
                         player.sendMessage(Chat.parameterize(Locale.VERIFIED));
+                        player.sendMessage(Chat.parameterize(Locale.BACKUP_CODES_VERIFY));
+
                         requests.remove(player.getUniqueId());
                     } else {
                         player.sendMessage(Chat.parameterize(Locale.AUTHENTICATION_CODE_INCORRECT));
                     }
                 }
                 case AUTHENTICATE -> {
-                    Authentication authentication = authenticationHandler.getAuthentications().get(player.getUniqueId());
+                    Authentication authentication = authenticationHandler.getAuthentication(player);
                     if (authenticationHandler.isVerified(authentication, code)) {
-                        Bukkit.getScheduler().runTask(plugin, () -> authenticationHandler.runCommands(player, plugin.getConfig()));
+
+                        Bukkit.getScheduler().runTask(authenticator, () ->
+                                authenticationHandler.runCommands(player, authenticator.getConfig())
+                        );
+
                         player.sendMessage(Chat.parameterize(Locale.AUTHENTICATED));
                         requests.remove(player.getUniqueId());
                     } else {
-                        Bukkit.getScheduler().runTask(plugin, () -> player.kickPlayer(Chat.parameterize(Locale.VERIFICATION_INCORRECT)));
+                        Bukkit.getScheduler().runTask(authenticator, () -> player.kickPlayer(Chat.parameterize(Locale.VERIFICATION_INCORRECT)));
                     }
                 }
             }

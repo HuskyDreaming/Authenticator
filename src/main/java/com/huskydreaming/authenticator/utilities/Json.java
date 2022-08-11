@@ -7,7 +7,6 @@ import org.bukkit.plugin.Plugin;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
@@ -48,7 +47,7 @@ public class Json {
     private static Path check(Plugin plugin, String fileName) {
         Path path = Paths.get(plugin.getDataFolder() + "/" + fileName + ".json");
         try {
-            if(!Files.exists(plugin.getDataFolder().toPath())) {
+            if (!Files.exists(plugin.getDataFolder().toPath())) {
                 Files.createDirectories(plugin.getDataFolder().toPath());
                 plugin.getLogger().info("Creating new directory: " + plugin.getDataFolder());
             }

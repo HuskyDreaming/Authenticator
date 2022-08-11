@@ -1,8 +1,8 @@
 package com.huskydreaming.authenticator;
 
+import com.huskydreaming.authenticator.authentication.AuthenticationCommand;
 import com.huskydreaming.authenticator.authentication.AuthenticationHandler;
 import com.huskydreaming.authenticator.authentication.AuthenticationListener;
-import com.huskydreaming.authenticator.authentication.AuthenticationCommand;
 import com.huskydreaming.authenticator.requests.RequestHandler;
 import com.huskydreaming.authenticator.requests.RequestListener;
 import com.huskydreaming.authenticator.utilities.Locale;
@@ -22,9 +22,15 @@ public class Authenticator extends JavaPlugin {
     private AuthenticationHandler authenticationHandler;
     private RequestHandler requestHandler;
 
+    private int backupCodesAmount;
+    private int backupCodesLength;
+
     @Override
     public void onEnable() {
         saveDefaultConfig();
+
+        backupCodesLength = getConfig().getInt("backup-codes.length");
+        backupCodesAmount = getConfig().getInt("backup-codes.amount");
 
         locale = new Yaml("locale");
         locale.load(this);
@@ -40,8 +46,8 @@ public class Authenticator extends JavaPlugin {
 
         requestHandler = new RequestHandler(this, authenticationHandler);
 
-        for(Player player : getServer().getOnlinePlayers()) {
-            if(player.hasPermission("authenticator.use") || player.isOp()) {
+        for (Player player : getServer().getOnlinePlayers()) {
+            if (player.hasPermission("authenticator.use") || player.isOp()) {
                 requestHandler.sendRequest(player);
             }
         }
@@ -52,7 +58,7 @@ public class Authenticator extends JavaPlugin {
         );
 
         PluginCommand pluginCommand = getCommand("authenticator");
-        if(pluginCommand != null) pluginCommand.setExecutor(new AuthenticationCommand(this));
+        if (pluginCommand != null) pluginCommand.setExecutor(new AuthenticationCommand(this));
     }
 
     @Override
@@ -72,8 +78,8 @@ public class Authenticator extends JavaPlugin {
         authenticationHandler.serialize();
         authenticationHandler.deserialize();
 
-        for(Player player : getServer().getOnlinePlayers()) {
-            if(player.hasPermission("authenticator.use") || player.isOp()) {
+        for (Player player : getServer().getOnlinePlayers()) {
+            if (player.hasPermission("authenticator.use") || player.isOp()) {
                 requestHandler.sendRequest(player);
             }
         }
@@ -87,5 +93,13 @@ public class Authenticator extends JavaPlugin {
     @NotNull
     public RequestHandler getRequestHandler() {
         return requestHandler;
+    }
+
+    public int getBackupCodesAmount() {
+        return backupCodesAmount;
+    }
+
+    public int getBackupCodesLength() {
+        return backupCodesLength;
     }
 }

@@ -2,3 +2,7 @@
 commands:
   - "say hello {player}"
 #  - "lp user {player} permission add *"
+
+backup-codes:
+  length: 6 # How many letters/characters each code has
+  amount: 6 # How many codes are generated as a backup

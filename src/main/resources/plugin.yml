@@ -1,6 +1,6 @@
 name: Authenticator
 main: com.huskydreaming.authenticator.Authenticator
-version: 0.2.2-ALPHA
+version: 0.2.3-ALPHA
 api-version: 1.18
 author: HuskyDreaming
 

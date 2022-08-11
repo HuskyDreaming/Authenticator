@@ -19,6 +19,7 @@ import java.security.SecureRandom;
 public class Authentication {
 
     private final String secret;
+    private String[] backupCodes;
 
     public static Authentication create() {
         return new Authentication();
@@ -28,7 +29,7 @@ public class Authentication {
         SecureRandom secureRandom = new SecureRandom();
         Base32 base32 = new Base32();
 
-        byte[] bytes = new byte[(32 * 5) /8];
+        byte[] bytes = new byte[(32 * 5) / 8];
         secureRandom.nextBytes(bytes);
 
         secret = new String(base32.encode(bytes));
@@ -60,5 +61,13 @@ public class Authentication {
 
     public String getSecret() {
         return secret;
+    }
+
+    public String[] getBackupCodes() {
+        return backupCodes;
+    }
+
+    public void setBackupCodes(String[] backupCodes) {
+        this.backupCodes = backupCodes;
     }
 }

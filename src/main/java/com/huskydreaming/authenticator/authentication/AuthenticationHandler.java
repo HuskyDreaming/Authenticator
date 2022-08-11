@@ -1,7 +1,6 @@
 package com.huskydreaming.authenticator.authentication;
 
 import com.google.gson.reflect.TypeToken;
-import com.huskydreaming.authenticator.code.CodeGenerator;
 import com.huskydreaming.authenticator.code.CodeVerifier;
 import com.huskydreaming.authenticator.utilities.Json;
 import org.bukkit.Bukkit;
@@ -19,7 +18,6 @@ import org.bukkit.plugin.Plugin;
 
 import java.lang.reflect.Type;
 import java.time.Instant;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -38,7 +36,8 @@ public class AuthenticationHandler {
     }
 
     public void deserialize() {
-        Type type = new TypeToken<Map<UUID, Authentication>>() {}.getType();
+        Type type = new TypeToken<Map<UUID, Authentication>>() {
+        }.getType();
         Map<UUID, Authentication> authentications = Json.read(plugin, "authentications", type);
 
         this.authentications = authentications != null ? authentications : new ConcurrentHashMap<>();
@@ -55,15 +54,14 @@ public class AuthenticationHandler {
     public void runCommands(Player player, FileConfiguration configuration) {
         List<String> commands = configuration.getStringList("commands");
         ConsoleCommandSender commandSender = Bukkit.getConsoleSender();
-        for(String command : commands) {
+        for (String command : commands) {
             command = command.replace("{player}", player.getName());
             Bukkit.dispatchCommand(commandSender, command);
         }
     }
 
     public boolean isVerified(Authentication authentication, String code) {
-        CodeGenerator codeGenerator = new CodeGenerator();
-        CodeVerifier verifier = new CodeVerifier(codeGenerator, Instant.now().getEpochSecond());
+        CodeVerifier verifier = new CodeVerifier(Instant.now().getEpochSecond());
 
         return verifier.isValid(authentication.getSecret(), code);
     }
@@ -85,19 +83,19 @@ public class AuthenticationHandler {
         return persistentDataContainer.has(namespacedKey, PersistentDataType.STRING);
     }
 
-    public void cleanup( Player player ) {
-        for(int i = 0; i < player.getInventory().getSize(); i++) {
+    public void cleanup(Player player) {
+        for (int i = 0; i < player.getInventory().getSize(); i++) {
             ItemStack itemStack = player.getInventory().getItem(i);
-            if(itemStack != null) {
-                if(isItem(itemStack)) {
+            if (itemStack != null) {
+                if (isItem(itemStack)) {
                     player.getInventory().setItem(i, new ItemStack(Material.AIR));
                 }
             }
         }
     }
 
-    public Map<UUID, Authentication> getAuthentications() {
-        return Collections.unmodifiableMap(authentications);
+    public Authentication getAuthentication(Player player) {
+        return authentications.get(player.getUniqueId());
     }
 
     public NamespacedKey getNamespacedKey() {
