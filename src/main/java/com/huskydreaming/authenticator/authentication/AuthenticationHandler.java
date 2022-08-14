@@ -61,8 +61,11 @@ public class AuthenticationHandler {
     }
 
     public boolean isVerified(Authentication authentication, String code) {
-        CodeVerifier verifier = new CodeVerifier(Instant.now().getEpochSecond());
+        if(authentication.isBackupCode(code)) {
+            return authentication.updateCode(code, true);
+        }
 
+        CodeVerifier verifier = new CodeVerifier(Instant.now().getEpochSecond());
         return verifier.isValid(authentication.getSecret(), code);
     }
 

@@ -6,7 +6,7 @@
 
   <groupId>com.huskydreaming</groupId>
   <artifactId>Authenticator</artifactId>
-  <version>0.2.3-ALPHA</version>
+  <version>0.2.4-ALPHA</version>
 
   <properties>
     <maven.compiler.source>16</maven.compiler.source>

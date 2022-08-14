@@ -1,7 +1,6 @@
 package com.huskydreaming.authenticator.authentication;
 
 import com.huskydreaming.authenticator.Authenticator;
-import com.huskydreaming.authenticator.code.CodeGenerator;
 import com.huskydreaming.authenticator.requests.RequestHandler;
 import com.huskydreaming.authenticator.utilities.Chat;
 import com.huskydreaming.authenticator.utilities.Locale;
@@ -34,16 +33,12 @@ public class AuthenticationCommand implements CommandExecutor, TabCompleter {
                     commandSender.sendMessage(Chat.parameterize(Locale.NO_PERMISSION));
                     return true;
                 }
-                commandSender.sendMessage(Chat.parameterize(Locale.BACKUP_CODES_HEADER));
 
                 Authentication authentication = authenticator.getAuthenticationHandler().getAuthentication((Player) commandSender);
                 if (authentication == null) {
                     commandSender.sendMessage(Chat.parameterize(Locale.AUTHENTICATED_NULL));
                 } else {
-                    String[] backupCodes = authentication.getBackupCodes();
-                    for (int i = 0; i < backupCodes.length; i++) {
-                        commandSender.sendMessage(Chat.parameterize(Locale.BACKUP_CODES_FORMAT, String.valueOf(i), backupCodes[i]));
-                    }
+                    commandSender.sendMessage(authentication.getBackupCodes());
                 }
                 return true;
             }
@@ -66,10 +61,7 @@ public class AuthenticationCommand implements CommandExecutor, TabCompleter {
                 if (authentication == null) {
                     commandSender.sendMessage(Chat.parameterize(Locale.AUTHENTICATED_NULL));
                 } else {
-                    authentication.setBackupCodes(CodeGenerator.generateBackupCodes(
-                            authenticator.getBackupCodesLength(),
-                            authenticator.getBackupCodesAmount()
-                    ));
+                    authentication.createCodes(authenticator.getBackupCodesLength(), authenticator.getBackupCodesAmount());
                     commandSender.sendMessage(Chat.parameterize(Locale.BACKUP_CODES_RESET));
                 }
                 return true;

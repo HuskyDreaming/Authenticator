@@ -1,10 +1,14 @@
 package com.huskydreaming.authenticator.authentication;
 
+import com.huskydreaming.authenticator.code.CodeGenerator;
 import com.huskydreaming.authenticator.qr.QrData;
 import com.huskydreaming.authenticator.qr.QrGenerator;
 import com.huskydreaming.authenticator.qr.QrRenderer;
+import com.huskydreaming.authenticator.utilities.Chat;
+import com.huskydreaming.authenticator.utilities.Locale;
 import org.apache.commons.codec.binary.Base32;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -15,11 +19,15 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Authentication {
 
     private final String secret;
-    private String[] backupCodes;
+    private final Map<String, Boolean> backupCodes = new HashMap<>();
 
     public static Authentication create() {
         return new Authentication();
@@ -59,15 +67,41 @@ public class Authentication {
         return itemStack;
     }
 
+    public void createCodes(int length, int amount) {
+        backupCodes.clear();
+
+        String[] codes = CodeGenerator.generateBackupCodes(length, amount);
+        for(String code : codes) {
+            backupCodes.put(code, false);
+        }
+    }
+
+    public String getBackupCodes() {
+        StringBuilder stringBuilder = new StringBuilder();
+        List<String> codes = new ArrayList<>(backupCodes.keySet());
+        stringBuilder.append(Chat.parameterize(Locale.BACKUP_CODES_HEADER)).append("\n");
+        for (int i = 0; i < codes.size(); i++) {
+            String code = codes.get(i);
+
+            String chatFormat = Chat.parameterize(Locale.BACKUP_CODES_FORMAT, String.valueOf(i + 1), code);
+            if (backupCodes.get(code)) {
+                chatFormat = Chat.parameterize(Locale.BACKUP_CODES_FORMAT, String.valueOf(i + 1), ChatColor.STRIKETHROUGH + code);
+            }
+            stringBuilder.append(chatFormat).append("\n");
+        }
+        return stringBuilder.toString();
+    }
+
+    public boolean isBackupCode(String code) {
+        return backupCodes.containsKey(code);
+    }
+
+    public boolean updateCode(String code, boolean used) {
+        backupCodes.put(code, used);
+        return true;
+    }
+
     public String getSecret() {
         return secret;
-    }
-
-    public String[] getBackupCodes() {
-        return backupCodes;
-    }
-
-    public void setBackupCodes(String[] backupCodes) {
-        this.backupCodes = backupCodes;
     }
 }

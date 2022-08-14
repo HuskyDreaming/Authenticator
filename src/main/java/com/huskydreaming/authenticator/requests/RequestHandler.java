@@ -59,11 +59,7 @@ public class RequestHandler {
                     Authentication authentication = authenticationRequest.getAuthentication();
                     if (authenticationHandler.isVerified(authentication, code)) {
 
-
-                        authentication.setBackupCodes(CodeGenerator.generateBackupCodes(
-                                authenticator.getBackupCodesLength(),
-                                authenticator.getBackupCodesAmount()
-                        ));
+                        authentication.createCodes(authenticator.getBackupCodesLength(), authenticator.getBackupCodesAmount());
 
                         authenticationHandler.verify(player, authentication);
 

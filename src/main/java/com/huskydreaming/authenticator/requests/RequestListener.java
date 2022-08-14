@@ -3,6 +3,9 @@ package com.huskydreaming.authenticator.requests;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByBlockEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.player.*;
 
@@ -20,6 +23,33 @@ public class RequestListener implements Listener {
 
         if (player.hasPermission("authenticator.use") || player.isOp()) {
             requestHandler.sendRequest(player);
+        }
+    }
+
+    @EventHandler
+    public void onDamageEvent(EntityDamageByEntityEvent event) {
+        if(event.getEntity() instanceof Player player) {
+            if (requestHandler.hasRequest(player)) {
+                event.setCancelled(true);
+            }
+        }
+    }
+
+    @EventHandler
+    public void onDamageEvent(EntityDamageEvent event) {
+        if(event.getEntity() instanceof Player player) {
+            if (requestHandler.hasRequest(player)) {
+                event.setCancelled(true);
+            }
+        }
+    }
+
+    @EventHandler
+    public void onDamageEvent(EntityDamageByBlockEvent event) {
+        if(event.getEntity() instanceof Player player) {
+            if (requestHandler.hasRequest(player)) {
+                event.setCancelled(true);
+            }
         }
     }
 
