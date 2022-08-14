@@ -17,6 +17,9 @@ Use QR Codes in minecraft to correctly verify
 
 ## TODO:
 - [x] QR Codes
-- [ ] Backup Codes.
+- [x] Backup Codes.
 - [x] Localisation
 - [x] Administration Commands.
+- [x] Config Reloading
+- [ ] Database Storage Option
+- [ ] Faster Algorithm if possible.
