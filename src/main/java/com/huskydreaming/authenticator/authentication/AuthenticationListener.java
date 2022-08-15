@@ -37,6 +37,7 @@ public class AuthenticationListener implements Listener {
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
         authenticationHandler.cleanup(event.getPlayer());
+        authenticationHandler.serialize(event.getPlayer());
     }
 
     private boolean isAuthenticatorItem(Item item) {

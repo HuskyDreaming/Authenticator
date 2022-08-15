@@ -22,8 +22,14 @@ public class RequestListener implements Listener {
         Player player = event.getPlayer();
 
         if (player.hasPermission("authenticator.use") || player.isOp()) {
+            if(requestHandler.hasRequest(player)) requestHandler.removeRequest(player);
             requestHandler.sendRequest(player);
         }
+    }
+
+    @EventHandler
+    public void onQuit(PlayerQuitEvent event) {
+        requestHandler.removeRequest(event.getPlayer());
     }
 
     @EventHandler

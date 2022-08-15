@@ -33,7 +33,7 @@ public class RequestHandler {
     }
 
     public void sendRequest(Player player) {
-        Authentication authentication = authenticationHandler.getAuthentication(player);
+        Authentication authentication = authenticationHandler.deserialize(player);
         Request authenticationRequest;
         if (authentication != null) {
             authenticationRequest = new Request(RequestType.AUTHENTICATE, authentication);

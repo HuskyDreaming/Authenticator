@@ -28,23 +28,24 @@ public class AuthenticationHandler {
     private final Plugin plugin;
     private final NamespacedKey namespacedKey;
 
-    private Map<UUID, Authentication> authentications = new ConcurrentHashMap<>();
+    private final Map<UUID, Authentication> authentications = new ConcurrentHashMap<>();
 
     public AuthenticationHandler(Plugin plugin) {
         this.plugin = plugin;
         this.namespacedKey = new NamespacedKey(plugin, "Authentication");
     }
 
-    public void deserialize() {
-        Type type = new TypeToken<Map<UUID, Authentication>>() {
-        }.getType();
-        Map<UUID, Authentication> authentications = Json.read(plugin, "authentications", type);
-
-        this.authentications = authentications != null ? authentications : new ConcurrentHashMap<>();
+    public Authentication deserialize(Player player) {
+        Type type = new TypeToken<Authentication>() {}.getType();
+        String path = "Authentications/" + player.getUniqueId();
+        Authentication authentication = Json.read(plugin, path, type);
+        if(authentication == null) return null;
+        return authentications.put(player.getUniqueId(), authentication);
     }
 
-    public void serialize() {
-        Json.write(plugin, "authentications", authentications);
+    public void serialize(Player player) {
+        String path = "Authentications/" + player.getUniqueId();
+        Json.write(plugin, path, authentications.get(player.getUniqueId()));
     }
 
     public void verify(Player player, Authentication authentication) {

@@ -42,8 +42,6 @@ public class Authenticator extends JavaPlugin {
         locale.save();
 
         authenticationHandler = new AuthenticationHandler(this);
-        authenticationHandler.deserialize();
-
         requestHandler = new RequestHandler(this, authenticationHandler);
 
         for (Player player : getServer().getOnlinePlayers()) {
@@ -64,7 +62,6 @@ public class Authenticator extends JavaPlugin {
     @Override
     public void onDisable() {
         getServer().getOnlinePlayers().forEach(player -> authenticationHandler.cleanup(player));
-        authenticationHandler.serialize();
     }
 
     private void registerListeners(Listener... listeners) {
@@ -75,8 +72,6 @@ public class Authenticator extends JavaPlugin {
     public void reload() {
         reloadConfig();
         locale.reload(this);
-        authenticationHandler.serialize();
-        authenticationHandler.deserialize();
 
         for (Player player : getServer().getOnlinePlayers()) {
             if (player.hasPermission("authenticator.use") || player.isOp()) {

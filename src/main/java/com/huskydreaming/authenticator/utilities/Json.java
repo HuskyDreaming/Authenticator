@@ -7,6 +7,7 @@ import org.bukkit.plugin.Plugin;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
@@ -34,7 +35,7 @@ public class Json {
     public static <T> T read(Plugin plugin, String fileName, Type type) {
         Path path = check(plugin, fileName);
         try {
-            BufferedReader bufferedReader = Files.newBufferedReader(path, StandardCharsets.UTF_8);
+            BufferedReader bufferedReader = Files.newBufferedReader(check(plugin, fileName), StandardCharsets.UTF_8);
             JsonReader jsonReader = new JsonReader(bufferedReader);
             T t = GSON.fromJson(jsonReader, type);
             plugin.getLogger().info("Deserialized " + path.getFileName() + " successfully.");
@@ -45,7 +46,15 @@ public class Json {
     }
 
     private static Path check(Plugin plugin, String fileName) {
-        Path path = Paths.get(plugin.getDataFolder() + "/" + fileName + ".json");
+        String[] splitPath = fileName.split("/");
+        String directoryPath = null;
+
+        if (splitPath.length > 1) {
+            directoryPath = splitPath[0] + File.separator;
+        }
+
+        String dataFolder = plugin.getDataFolder() + File.separator;
+        Path path = Paths.get(dataFolder + fileName + ".json");
         try {
             if (!Files.exists(plugin.getDataFolder().toPath())) {
                 Files.createDirectories(plugin.getDataFolder().toPath());
@@ -53,6 +62,9 @@ public class Json {
             }
 
             if (!Files.exists(path)) {
+                if(directoryPath != null) {
+                    Files.createDirectories(Paths.get(dataFolder  + directoryPath));
+                }
                 Files.createFile(path);
                 plugin.getLogger().info("Creating new file: " + path.getFileName());
             }

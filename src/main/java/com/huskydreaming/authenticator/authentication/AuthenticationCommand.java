@@ -28,8 +28,8 @@ public class AuthenticationCommand implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String label, @NotNull String[] strings) {
         if (strings.length == 1) {
-            if (strings[0].equalsIgnoreCase("backupcodes") || commandSender.isOp()) {
-                if (!commandSender.hasPermission("authenticator.backupcodes")) {
+            if (strings[0].equalsIgnoreCase("backupcodes")) {
+                if (!commandSender.hasPermission("authenticator.backupcodes") || !commandSender.isOp()) {
                     commandSender.sendMessage(Chat.parameterize(Locale.NO_PERMISSION));
                     return true;
                 }
@@ -42,8 +42,8 @@ public class AuthenticationCommand implements CommandExecutor, TabCompleter {
                 }
                 return true;
             }
-            if (strings[0].equalsIgnoreCase("reload") || commandSender.isOp()) {
-                if (!commandSender.hasPermission("authenticator.reload")) {
+            if (strings[0].equalsIgnoreCase("reload")) {
+                if (!commandSender.hasPermission("authenticator.reload") || !commandSender.isOp()) {
                     commandSender.sendMessage(Chat.parameterize(Locale.NO_PERMISSION));
                     return true;
                 }
@@ -52,8 +52,8 @@ public class AuthenticationCommand implements CommandExecutor, TabCompleter {
                 commandSender.sendMessage(Chat.parameterize(Locale.RELOAD));
                 return true;
             }
-            if (strings[0].equalsIgnoreCase("resetcodes") || commandSender.isOp()) {
-                if (!commandSender.hasPermission("authenticator.backupcodes")) {
+            if (strings[0].equalsIgnoreCase("resetcodes")) {
+                if (!commandSender.hasPermission("authenticator.backupcodes") || !commandSender.isOp()) {
                     commandSender.sendMessage(Chat.parameterize(Locale.NO_PERMISSION));
                     return true;
                 }
@@ -67,8 +67,8 @@ public class AuthenticationCommand implements CommandExecutor, TabCompleter {
                 return true;
             }
         } else if (strings.length == 2) {
-            if (strings[0].equalsIgnoreCase("remove") || commandSender.isOp()) {
-                if (!commandSender.hasPermission("authenticator.remove")) {
+            if (strings[0].equalsIgnoreCase("remove")) {
+                if (!commandSender.hasPermission("authenticator.remove") || !commandSender.isOp()) {
                     commandSender.sendMessage(Chat.parameterize(Locale.NO_PERMISSION));
                     return true;
                 }
