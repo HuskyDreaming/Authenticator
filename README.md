@@ -21,5 +21,6 @@ Use QR Codes in minecraft to correctly verify
 - [x] Localisation
 - [x] Administration Commands.
 - [x] Config Reloading
+- [x] File Per UUID
 - [ ] Database Storage Option
 - [ ] Faster Algorithm if possible.
